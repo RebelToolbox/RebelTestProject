@@ -1,0 +1,6 @@
+.import/
+.mono/
+.vs/
+android/
+
+export_presets.cfg
