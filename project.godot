@@ -1,0 +1,45 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=4
+
+[application]
+
+run/main_scene="res://Start.tscn"
+config/icon="res://icon.png"
+
+[autoload]
+
+Autoload="*res://Autoload/Autoload.gd"
+ValueCreator="*res://AutomaticBugs/ValueCreator.gd"
+BasicData="*res://AutomaticBugs/BasicData.gd"
+ParseArgumentType="*res://AutomaticBugs/ParseArgumentType.gd"
+
+[debug]
+
+gdscript/warnings/enable=false
+gdscript/warnings/standalone_expression=false
+
+[logging]
+
+file_logging/enable_file_logging.pc=false
+
+[memory]
+
+limits/message_queue/max_size_kb=131072
+
+[network]
+
+limits/debugger_stdout/max_chars_per_second=16384
+limits/debugger_stdout/max_messages_per_frame=100
+limits/debugger_stdout/max_errors_per_second=1000
+limits/debugger_stdout/max_warnings_per_second=1000
+
+[rendering]
+
+environment/default_environment="res://Environment.tres"
