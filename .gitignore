@@ -3,4 +3,5 @@
 .vs/
 android/
 
-export_presets.cfg
+# Export presets are required for the Exported Build CI test
+#export_presets.cfg
