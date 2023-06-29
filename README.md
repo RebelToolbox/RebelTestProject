@@ -4,11 +4,11 @@ A Rebel project used to find regressions in [Rebel Engine](https://github.com/Re
 This project was forked from the [Godot regression test project v3.4](https://github.com/godotengine/regression-test-project/tree/3.4), which was used to do regression testing against [Godot 3.4.5](https://github.com/godotengine/godot/tree/3.4.5-stable) from which Rebel Engine was forked.
 
 ## Basic Information
-This project contains a number of test scenes and a default `Start.tscn` scene that opens all the other scenes. The list of test scenes can be found in the `Autoload.gd` file. Comment out selected lines in the `alone_steps` `Array` to choose which scenes will run.
+This project contains a number of test scenes and a default `Start.tscn` scene that opens all the other scenes. The list of test scenes can be found in the `Autoload.gd` file. Comment out selected lines in the `test_scenes` `Array` to choose which scenes will run.
 
-!![Autoload gd](https://github.com/RebelToolbox/RebelTestProject/assets/9253928/b4465e4c-815d-4214-a627-e460920c7042)
+![Autoload gd](https://github.com/RebelToolbox/RebelTestProject/assets/9253928/30ad7475-cacf-4388-975a-a53e8133a75b)
 
-The project runs for a time-limited default 25s. It is possible to change how long the project is allowed to run. Either change the `time_to_show` variable, or, when running from the command line, append the number of seconds as an argument to the Rebel Engine exectuable. Each test scene is opened in turn and allowed to run for a equal fraction of the total project time.
+The project runs for a time-limited default 25s. It is possible to change how long the project is allowed to run. Either change the `total_test_time` variable, or, when running from the command line, append the number of seconds as an argument to the Rebel Engine exectuable. Each test scene is opened in turn and allowed to run for a equal fraction of the total test time.
 
 This project is designed to run as part of CI with a version of Rebel Engine compiled with Address and Undefined sanitizers (`scons use_asan=yes use_ubsan=yes`). Without these options it won't always be possible to detect the bug or get a detailed backtrace.
 
@@ -18,10 +18,10 @@ This project is designed to run as part of CI with a version of Rebel Engine com
 The quickest way to find the problem scene is by reviewing the logs. If you come across something like this:
 ```
 Changed scene to res://Physics/2D/Physics2D.tscn
-Test is running now 10 seconds
+Total test running time: 10 seconds
 Changed scene to res://Physics/3D/Physics3D.tscn
 ##### CRASH #####
-Rebel crashed with signal ...
+Program crashed with signal ...
 ```
 This indicates 2 potentially broken scenes:
 - `Physics3D.tscn`: crash occured when scene was opened
@@ -47,7 +47,7 @@ ERROR: set_align: Index (int)p_align = 100 is out of bounds (4 = 4).
    At: scene/gui/line_edit.cpp:592.
 scene/resources/line_edit.cpp:186:2: runtime error: member access within null pointer of type 'struct LineEdit'
 handle_crash: Program crashed with signal 11
-Dumping the backtrace. Please include this when reporting the bug on godotengine/godot/issues
+Dumping the backtrace. Please include this when reporting the bug on https://github.com/RebelToolbox/RebelEngine/issues
 [1] bin/rebel.linuxbsd.tools.64s() [0x1e697d8] (/home/runner/work/rebel/rebel/platform/linuxbsd/crash_handler_linuxbsd.cpp:54)
 [2] /lib/x86_64-linux-gnu/libc.so.6(+0x46210) [0x7fd1ca5b0210] (??:0)
 ```
