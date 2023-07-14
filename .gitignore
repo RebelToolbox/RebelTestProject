@@ -5,3 +5,5 @@ android/
 
 # Export presets are required for the Exported Build CI test
 #export_presets.cfg
+
+*.log
