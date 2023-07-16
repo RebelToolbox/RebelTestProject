@@ -70,12 +70,12 @@ jobs:
       # Open Editor to import assets
       - name: Open Rebel Engine Editor
         run: |
-          DRI_PRIME=0 xvfb-run ${{ matrix.rebel-engine }} -e -q 2>&1 | tee editor.log || true
+          DRI_PRIME=0 xvfb-run ${{ matrix.rebel-engine }} -e -q 2>&1 | tee editor.log
           ./check_log.py editor.log
 
       - name: Run Rebel Engine Test Project
         run: |
-          DRI_PRIME=0 xvfb-run ${{ matrix.rebel-engine }} 300 2>&1 | tee project.log || true
+          DRI_PRIME=0 xvfb-run ${{ matrix.rebel-engine }} 300 2>&1 | tee project.log
           ./check_log.py project.log
 
       - name: Upload artifacts
