@@ -51,6 +51,7 @@ jobs:
           build-essential \
           pkg-config \
           clang \
+          lld \
           python3 \
           scons \
           libx11-dev \
