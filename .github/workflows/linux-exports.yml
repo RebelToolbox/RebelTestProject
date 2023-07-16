@@ -20,8 +20,8 @@ jobs:
         include:
           - name: Linux Debug Export
             artifact: linux-debug-export
-            engine-build-options: use_asan=yes use_ubsan=yes use_llvm=yes use_lld=yes
-            rebel-engine: RebelEngine/bin/godot.x11.tools.64.llvms
+            editor-build-options: use_asan=yes use_ubsan=yes use_llvm=yes use_lld=yes
+            editor: RebelEngine/bin/godot.x11.tools.64.llvms
             template-build-options: tools=no target=release debug_symbols=yes use_asan=yes use_ubsan=yes use_llvm=yes use_lld=yes
             template: RebelEngine/bin/godot.x11.opt.64.llvms
             export-preset: Linux/X11
@@ -61,7 +61,7 @@ jobs:
 
       - name: Compile Rebel Engine
         working-directory: RebelEngine
-        run: scons -j2 ${{ matrix.engine-build-options }}
+        run: scons -j2 ${{ matrix.editor-build-options }}
 
       - name: Compile Export Template
         working-directory: RebelEngine
@@ -71,7 +71,7 @@ jobs:
         run: |
           template="$(pwd)/${{ matrix.template }}"
           sed -i "s|${{ matrix.export-preset-key }}|$template|" export_presets.cfg
-          DRI_PRIME=0 xvfb-run ${{ matrix.rebel-engine }} --export-debug "${{ matrix.export-preset }}" ${{ matrix.project }} 2>&1 | tee export.log
+          DRI_PRIME=0 xvfb-run ${{ matrix.editor }} --export-debug "${{ matrix.export-preset }}" ${{ matrix.project }} 2>&1 | tee export.log
           ./check_log.py export.log
 
       - name: Run Linux Export Project
