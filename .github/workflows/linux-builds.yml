@@ -14,6 +14,8 @@ jobs:
   linux-builds:
     name: ${{ matrix.name }}
     runs-on: "ubuntu-20.04"
+    env:
+      SCONS_CACHE: .scons-cache/
     strategy:
       fail-fast: false
       matrix:
@@ -47,6 +49,15 @@ jobs:
         with:
           repository: RebelToolbox/RebelEngine
           path: RebelEngine
+
+      - name: Configure SCons Cache
+        uses: actions/cache@v3
+        with:
+          path: RebelEngine/${{ env.SCONS_CACHE }}
+          key: ${{ github.job }}-${{ strategy.job-index }}-${{ github.sha }}
+          restore-keys: |
+            ${{ github.job }}-${{ strategy.job-index }}
+            ${{ github.job }}-
 
       - name: Install dependencies
         run: |
