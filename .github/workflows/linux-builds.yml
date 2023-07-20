@@ -6,10 +6,16 @@ on:
     # Run a test every week: on Sunday night at midnight.
     - cron: '0 0 * * 1'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   linux-builds:
     name: ${{ matrix.name }}
     runs-on: "ubuntu-20.04"
+    env:
+      SCONS_CACHE: .scons-cache/
     strategy:
       fail-fast: false
       matrix:
@@ -44,12 +50,23 @@ jobs:
           repository: RebelToolbox/RebelEngine
           path: RebelEngine
 
+      - name: Configure SCons Cache
+        uses: actions/cache@v3
+        with:
+          path: RebelEngine/${{ env.SCONS_CACHE }}
+          key: ${{ github.job }}-${{ strategy.job-index }}-${{ github.sha }}
+          restore-keys: |
+            ${{ github.job }}-${{ strategy.job-index }}
+            ${{ github.job }}-
+
       - name: Install dependencies
         run: |
+          sudo apt-get update
           sudo apt-get install -y \
           build-essential \
           pkg-config \
           clang \
+          lld \
           python3 \
           scons \
           libx11-dev \
