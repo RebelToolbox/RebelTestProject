@@ -56,8 +56,7 @@ jobs:
           path: RebelEngine/${{ env.SCONS_CACHE }}
           key: ${{ github.job }}-${{ strategy.job-index }}-${{ github.sha }}
           restore-keys: |
-            ${{ github.job }}-${{ strategy.job-index }}
-            ${{ github.job }}-
+            ${{ github.job }}-${{ strategy.job-index }}-
 
       - name: Install dependencies
         run: |
