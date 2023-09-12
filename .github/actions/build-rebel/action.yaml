@@ -1,0 +1,74 @@
+name: Build Rebel
+
+inputs:
+  artifact:
+    description: Name of the artifact to be uploaded
+  build-options:
+    description: SCons build options
+  rebel-executable:
+    # TODO: Replace with an output.
+    # This input should not be needed.
+    # We should be able to determine this, and return it to the caller.
+    description: Filename of the binary that will be built
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout Rebel Engine
+      uses: actions/checkout@v3
+      with:
+        repository: RebelToolbox/RebelEngine
+        path: RebelEngine
+
+    - name: Set SCons Cache Environment Variable
+      shell: bash
+      run: echo "SCONS_CACHE=.scons-cache/" >> $GITHUB_ENV
+
+    - name: Setup SCons cache
+      uses: actions/cache@v3
+      with:
+        path: RebelEngine/${{ env.SCONS_CACHE }}
+        key: ${{ github.job }}-${{ strategy.job-index }}-${{ github.ref_name }}
+        restore-keys: |
+          ${{ github.job }}-${{ strategy.job-index }}-
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        #Install dependencies
+        echo "::group::Install dependencies"
+        sudo apt-get update
+        sudo apt-get install -y \
+        build-essential \
+        pkg-config \
+        clang \
+        lld \
+        python3 \
+        scons \
+        libx11-dev \
+        libxcursor-dev \
+        libxinerama-dev \
+        libxrandr-dev \
+        libxi-dev \
+        libgl-dev \
+        libudev-dev \
+        libasound2-dev \
+        libpulse-dev \
+        yasm
+        echo "::endgroup::"
+
+    - name: Build Rebel
+      shell: bash
+      working-directory: RebelEngine
+      run: |
+        #Build Rebel
+        echo "::group::Build Rebel"
+        scons -j2 ${{ inputs.build-options }}
+        echo "::ungroup::"
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ inputs.artifact }}
+        path: RebelEngine/bin/${{ inputs.rebel-executable }}
+        retention-days: 1
