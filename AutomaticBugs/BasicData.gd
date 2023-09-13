@@ -1,72 +1,63 @@
 extends Node
 
-var regression_test_project : bool = true # Set it to true in RegressionTestProject
+# Set to true when doing regression testing.
+var regression_testing: bool = true
 
-### Contains info about disabled classes and allows to take info about allowed methods
-
-# Globablly disabled functions for all classes
-var function_exceptions : Array = [
+# List of disabled methods for all classes
+var disabled_methods: Array = [
 	"get_packet", # TODO
-	"_gui_input", # TODO probably missing cherrypick #GH 47636
-	"_input",
-	"_unhandled_input", 
-	"_unhandled_key_input",
-	"connect_to_signal", # Should be chrrypicked
-	
-	# They exists without assigment like Class.method, because they may be a parent of other objects and children also should have disabled child.method, its children also etc. which is too much to do
+	"_gui_input", # TODO: Probably missing cherrypick GH 47636
+	"_input", # TODO
+	"_unhandled_input", # TODO
+	"_unhandled_key_input", # TODO
+	"connect_to_signal", # TODO
+	# Can be called without initialising: like Class.method, because
+	# It may be a parent of other objects and children
+	# Requires disabling child.method and all its children
 	#"connect_to_signal", # GH 47572
 	"_editor_settings_changed",# GH 45979
 	"_submenu_timeout", # GH 45981
-	"_thread_done", #GH 46000
-	"generate", #GH 46001
-	"_proximity_group_broadcast", #GH 46002
-	"_direct_state_changed", #GH 46003
-	"create_from", #GH 46004
-	"create_from_blend_shape", #GH 46004
-	"append_from", #GH 46004
-	"_set_tile_data", #GH 46015
-	"get", #GH 46019
-	"instance_has", #GH 46020
-	"get_var", #GH 46096
-	"set_script", #GH 46120
-	"getvar", #GH 46019
-	"get_available_chars", #GH 46118
-	"open_midi_inputs", #GH 46183
-	"set_icon", #GH 46189
-	"get_latin_keyboard_variant", #GH  TODO Memory Leak
-	"set_editor_hint", #GH 46252
-	"get_item_at_position", #TODO hard to find
-	"set_probe_data", #GH 46570
-	"_range_click_timeout", #GH 46648
-	"get_indexed", #GH 46019
-	"add_vertex", #GH 47066
-	"create_client", # TODO, strange memory leak
+	"_thread_done", # GH 46000
+	"generate", # GH 46001
+	"_proximity_group_broadcast", # GH 46002
+	"_direct_state_changed", # GH 46003
+	"create_from", # GH 46004
+	"create_from_blend_shape", # GH 46004
+	"append_from", # GH 46004
+	"_set_tile_data", # GH 46015
+	"get", # GH 46019
+	"instance_has", # GH 46020
+	"get_var", # GH 46096
+	"set_script", # GH 46120
+	"getvar", # GH 46019
+	"get_available_chars", # GH 46118
+	"open_midi_inputs", # GH 46183
+	"set_icon", # GH 46189
+	"get_latin_keyboard_variant", # TODO: Memory Leak
+	"set_editor_hint", # GH 46252
+	"get_item_at_position", # TODO: Hard to find
+	"set_probe_data", # GH 46570
+	"_range_click_timeout", # GH 46648
+	"get_indexed", # GH 46019
+	"add_vertex", # GH 47066
+	"create_client", # TODO: Strange memory leak
 	"create_shape_owner", #47135
 	"shape_owner_get_owner", #47135
-
-	"get_bind_bone", #GH 47358
-	"get_bind_name", #GH 47358
-	"get_bind_pose", #GH 47358
-
-	# TODO Check this later
-	"propagate_notification",
-	"notification",
-
-	# TODO Adds big spam when i>100 - look for possiblity to 
-	"add_sphere",
-	"_update_inputs", # Cause big spam with add_input
-	# Spam when i~1000 - change to specific 
-	"update_bitmask_region",
-	"set_enabled_inputs",
-
-	# Slow Function
-	"_update_sky",
-
-	# Undo/Redo function which doesn't provide enough information about types of objects, probably due vararg(variable size argument)
-	"add_do_method",
-	"add_undo_method",
-
-	# Do not save files and create files and folders
+	"get_bind_bone", # GH 47358
+	"get_bind_name", # GH 47358
+	"get_bind_pose", # GH 47358
+	"propagate_notification", # TODO
+	"notification", # TODO
+	"add_sphere", 	# TODO: Spams the log when when i > 100
+	"_update_inputs", # TODO: Spams the log with add_input
+	"update_bitmask_region", # TODO: Spams the log when i~1000
+	"set_enabled_inputs", # TODO
+	"_update_sky", # TODO: Slow
+	# Undo/Redo functions don't provide enough information about types of objects
+	# May be due to vararg(variable size argument)
+	"add_do_method", # TODO
+	"add_undo_method", # TODO
+	# Disable saving files and creating folders
 	"pck_start",
 	"save",
 	"save_png",
@@ -79,25 +70,23 @@ var function_exceptions : Array = [
 	"save_exr",
 	"dump_resources_to_file",
 	"dump_memory_to_file",
-	# This also allow to save files
+	# Disable opening files
 	"open",
 	"open_encrypted",
 	"open_encrypted_with_pass",
 	"open_compressed",
-
-	# Do not warp mouse
+	# Disable mouse warp
 	"warp_mouse",
 	"warp_mouse_position",
-
-	# OS
+	# Disable OS functions
 	"kill",
 	"shell_open",
 	"execute",
 	"delay_usec",
 	"delay_msec",
-	"alert", # Stupid alert window opens
-
-	# Godot Freeze
+	# Blocking alert window that waits for user input
+	"alert",
+	# Blocking functions
 	"wait_to_finish",
 	"accept_stream",
 	"connect_to_stream",
@@ -105,29 +94,23 @@ var function_exceptions : Array = [
 	"wait",
 	"debug_bake",
 	"bake",
-
-	"_create", # TODO Check
-
-
-	"set_gizmo", # Stupid function, needs as parameter an object which can't be instanced # TODO, create issue to hide it 
-
-	# Spams Output
+	"_create", # TODO
+	"set_gizmo", # TODO: Should be removed: Needs an object parameter that can't be instanced 
+	# Spams the log
 	"print_tree",
 	"print_stray_nodes",
 	"print_tree_pretty",
 	"print_all_textures_by_size",
 	"print_all_resources",
 	"print_resources_in_use",
-
 	# Do not call other functions
 	"_call_function",
 	"call",
 	"call_deferred",
 	"callv",
-	# Looks like a bug in FuncRef, probably but not needed, because it call other functions
-	"call_func",
-
-	# Too dangerous, because add, mix and remove randomly nodes and objects
+	# May be a bug in FuncRef, probably not needed
+	"call_func", # TODO
+	# Disable, because they add, mix and remove random nodes and objects
 	"replace_by",
 	"create_instance",
 	"set_owner",
@@ -149,71 +132,85 @@ var function_exceptions : Array = [
 	"add_sibling",
 ]
 
-# Globally disabled classes which causes bugs or are very hard to us
-var disabled_classes : Array = [
-	"ProjectSettings", # Don't mess with project settings, because they can broke entire your workflow
-	"EditorSettings", # Also don't mess with editor settings
-	"_OS", # This may sometimes crash compositor, but it should be tested manually sometimes
-	"GDScript", # Broke script
-	
-	# This classes have problems with static/non static methods
-	"PhysicsDirectSpaceState",
-	"Physics2DDirectSpaceState",
-	"PhysicsDirectBodyState",
-	"Physics2DDirectBodyState",
-	"BulletPhysicsDirectSpaceState",
-	"InputDefault",
-	"IP_Unix",
-	"JNISingleton",
-	
-	# Only one class - JavaClass returns Null when using JavaClass.new().get_class
-	"JavaClass",
-	
-	# Just don't use these because they are not normal things 
+# List of disabled classes
+var disabled_classes: Array = [
 	"_Thread",
 	"_Semaphore",
 	"_Mutex",
+	"ProjectSettings", # Don't change project settings, because they can break the workflow
+	"EditorSettings",
+	"_OS", # TODO
+	"GDScript", # TODO
+	"PhysicsDirectSpaceState", # TODO
+	"Physics2DDirectSpaceState", # TODO
+	"PhysicsDirectBodyState", # TODO
+	"Physics2DDirectBodyState", # TODO
+	"BulletPhysicsDirectSpaceState", # TODO
+	"InputDefault", # TODO
+	"IP_Unix", # TODO
+	"JNISingleton", # TODO
+	"JavaClass",  # TODO: Returns Null when using JavaClass.new().get_class
 ]
 
-# Checks if function can be executed
-# Looks at its arguments an
-func check_if_is_allowed(method_data : Dictionary) -> bool:
-	# Function is virtual or vararg, so we just skip it
+# Check if method can be executed
+func is_method_executable(method_data: Dictionary) -> bool:
+	# Skip virtual or vararg functions
 	if method_data["flags"] == method_data["flags"] | METHOD_FLAG_VIRTUAL:
 		return false
-	if method_data["flags"] == method_data["flags"] | 128: # VARARG TODO, Godot issue, add missing flag binding
+	if method_data["flags"] == method_data["flags"] | 128: # TODO: New issue: add missing flag binding
 		return false
-		
+	# Check arguments
 	for arg in method_data["args"]:
-		var name_of_class : String = arg["class_name"]
+		var name_of_class: String = arg["class_name"]
 		if name_of_class.empty():
 			continue
 		if name_of_class in disabled_classes:
 			return false
 		if name_of_class.find("Server") != -1 && ClassDB.class_exists(name_of_class) && !ClassDB.is_parent_class(name_of_class,"Reference"):
 			return false
-		# Editor stuff usually aren't good choice for arhuments	
+		# Skip classes with Editor and SkinReference in the name
 		if name_of_class.find("Editor") != -1 || name_of_class.find("SkinReference") != -1:
 			return false
-			
-		# In case of adding new type, this prevents from crashing due not recognizing this type
-		# In case of removing/rename type, just comment e.g. TYPE_ARRAY and all occurencies on e.g. switch statement with it
-		var t : int = arg["type"]
-		if !(t == TYPE_NIL || t == TYPE_AABB || t == TYPE_ARRAY || t == TYPE_BASIS || t == TYPE_BOOL || t == TYPE_COLOR || t == TYPE_COLOR_ARRAY || t == TYPE_DICTIONARY || t == TYPE_INT || t == TYPE_INT_ARRAY || t == TYPE_NODE_PATH || t == TYPE_OBJECT || t == TYPE_PLANE || t == TYPE_QUAT || t == TYPE_RAW_ARRAY || t == TYPE_REAL || t == TYPE_REAL_ARRAY || t == TYPE_RECT2 || t == TYPE_RID || t == TYPE_STRING || t == TYPE_TRANSFORM || t == TYPE_TRANSFORM2D || t == TYPE_VECTOR2 || t == TYPE_VECTOR2_ARRAY || t == TYPE_VECTOR3 || t == TYPE_VECTOR3_ARRAY):
-			print("----------------------------------------------------------- TODO - MISSING TYPE, ADD SUPPORT IT") # Add assert here to get info which type is missing
+		# New types may cause a crash
+		# Ignore unknown types
+		var type: int = arg["type"]
+		if !(type == TYPE_NIL ||
+				type == TYPE_AABB ||
+				type == TYPE_ARRAY ||
+				type == TYPE_BASIS ||
+				type == TYPE_BOOL ||
+				type == TYPE_COLOR ||
+				type == TYPE_COLOR_ARRAY ||
+				type == TYPE_DICTIONARY ||
+				type == TYPE_INT ||
+				type == TYPE_INT_ARRAY ||
+				type == TYPE_NODE_PATH ||
+				type == TYPE_OBJECT ||
+				type == TYPE_PLANE ||
+				type == TYPE_QUAT ||
+				type == TYPE_RAW_ARRAY ||
+				type == TYPE_REAL ||
+				type == TYPE_REAL_ARRAY ||
+				type == TYPE_RECT2 ||
+				type == TYPE_RID ||
+				type == TYPE_STRING ||
+				type == TYPE_TRANSFORM ||
+				type == TYPE_TRANSFORM2D ||
+				type == TYPE_VECTOR2 ||
+				type == TYPE_VECTOR2_ARRAY ||
+				type == TYPE_VECTOR3 ||
+				type == TYPE_VECTOR3_ARRAY):
+			print("Unknown type: ", type)
 			return false
-			
-		#This is only for RegressionTestProject, because it needs for now clear visual info what is going on screen, but some nodes broke view
-		if regression_test_project:
-			# That means that this is constant, not class
+		if regression_testing:
+			# If class doesn't exist it is probably a constant
 			if !ClassDB.class_exists(name_of_class):
 				continue
 			if !ClassDB.is_parent_class(name_of_class, "Node") && !ClassDB.is_parent_class(name_of_class, "Reference"):
 				return false
-	
 	return true
 
-func remove_disabled_methods(method_list : Array, exceptions : Array) -> void:
+func remove_disabled_methods(method_list: Array, exceptions: Array) -> void:
 	for exception in exceptions:
 		var index: int = -1
 		for method_index in range(method_list.size()):
@@ -223,35 +220,23 @@ func remove_disabled_methods(method_list : Array, exceptions : Array) -> void:
 		if index != -1:
 			method_list.remove(index)
 
-# Return all available classes which can be used
-func get_list_of_available_classes(must_be_instantable : bool = true) -> Array:
-	var full_class_list : Array = Array(ClassDB.get_class_list())
-	var classes : Array = []
+func get_available_classes(must_be_instantable: bool = true) -> Array:
+	var full_class_list: Array = Array(ClassDB.get_class_list())
+	var classes: Array = []
 	full_class_list.sort()
 	var c = 0
-#	var rr = 0
 	for name_of_class in full_class_list:
-#		rr += 1
 		if name_of_class in disabled_classes:
 			continue
-		
-#		if rr < 550:
-#			continue	
-
-		#This is only for RegressionTestProject, because it needs for now clear visual info what is going on screen, but some nodes broke view
-		if regression_test_project:
+		if regression_testing:
 			if !ClassDB.is_parent_class(name_of_class, "Node") && !ClassDB.is_parent_class(name_of_class, "Reference"):
 				continue
-
 		if name_of_class.find("Server") != -1 && !ClassDB.is_parent_class(name_of_class,"Reference"):
 			continue
-		if name_of_class.find("Editor") != -1 && regression_test_project:
+		if name_of_class.find("Editor") != -1 && regression_testing:
 			continue
-			
-			
 		if !must_be_instantable || ClassDB.can_instance(name_of_class):
 			classes.push_back(name_of_class)
 			c+= 1
-			
 	print(str(c) + " choosen classes from all " + str(full_class_list.size()) + " classes.")
 	return classes

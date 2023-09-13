@@ -1,30 +1,25 @@
 extends Node
 
+const PRINT_TIME_INTERVAL: int = 5000
 const screen_size = Vector2(1024, 600)
-
-var start_time: int
-var last_time: int
-
-const PRINT_TIME_EVERY_MILISECONDS: int = 5000
-var time_to_print_next_time: int = PRINT_TIME_EVERY_MILISECONDS
-
-var time_to_show: int = 25 * 1000  # How long test works in miliseconds
-
-var time_for_each_step: int = -1
-
-var can_be_closed: bool = true
-
-# Each scene runs alone
-const alone_steps: Array = [
+const test_scenes: Array = [
 	"res://CreatingAllThings/CreatingAllThings.tscn",
 	"res://Nodes/Nodes.tscn",
 	"res://Physics/2D/Physics2D.tscn",
 	"res://Physics/3D/Physics3D.tscn",
 	"res://ReparentingDeleting/ReparentingDeleting.tscn",
-	"res://AutomaticBugs/FunctionExecutor.tscn",  # Only runs
+	"res://AutomaticBugs/FunctionExecutor.tscn",
 ]
 
-var time_object : Object
+# Total test time in miliseconds.
+# Default is 25 seconds.
+var total_test_time: int = 25 * 1000
+var scene_test_time: int = -1
+var next_print_time: int = PRINT_TIME_INTERVAL
+var all_tests_run: bool = false
+var time_object: Object
+var start_time: int
+var last_time: int
 
 func _init():
 	if ClassDB.class_exists("_Time"):
@@ -33,32 +28,27 @@ func _init():
 		time_object = ClassDB.instance("_Time")
 	else:
 		time_object = ClassDB.instance("_OS")
-		
-	
 	start_time = time_object.get_ticks_msec()
-
-	# In case when user doesn't provide time
-	time_for_each_step = time_to_show / (alone_steps.size())
-
+	# Check command line arguments for user defined total test time.
 	for argument in OS.get_cmdline_args():
-		if argument.is_valid_float():  # Ignore all non numeric arguments
-			time_to_show = int(argument.to_float() * 1000)
-			time_for_each_step = time_to_show / (alone_steps.size())
-			print("Time set to: " + str(time_to_show / 1000.0) + " seconds with " + str(alone_steps.size()) + " steps, each step will take " + str(time_for_each_step / 1000.0) + " seconds.")
-			break  # We only need to take first argument
-
+		# Ignore all non numeric arguments.
+		if argument.is_valid_float():
+			total_test_time = int(argument.to_float() * 1000)
+			print("Total test time set to: ", str(total_test_time / 1000.0), " seconds")
+			# Ignore all other arguments
+			break
+	scene_test_time = total_test_time / (test_scenes.size())
 
 func _process(delta: float) -> void:
 	var current_run_time: int = time_object.get_ticks_msec() - start_time
-
-	# While loop instead if, will allow to properly flush results under heavy operations(e.g. Thread sanitizer)
-	while current_run_time > time_to_print_next_time:
-		print("Test is running now " + str(int(time_to_print_next_time / 1000)) + " seconds")
-		time_to_print_next_time += PRINT_TIME_EVERY_MILISECONDS
-
-	if current_run_time > time_to_show && can_be_closed:
-		print("######################## Ending test ########################")
+	# Using a while loop instead of an if loop allows the test time to be properly updated.
+	while current_run_time > next_print_time:
+		print("Total test running time: ", str(int(next_print_time / 1000), " seconds"))
+		next_print_time += PRINT_TIME_INTERVAL
+	if current_run_time > total_test_time && all_tests_run:
+		print("All tests complete!")
+		print("Total test time: ", str(current_run_time / 1000), " seconds")
 		get_tree().quit()
-		
+
 func _exit_tree() -> void:
 	time_object.free()
