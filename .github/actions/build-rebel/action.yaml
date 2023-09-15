@@ -28,7 +28,7 @@ runs:
       uses: actions/cache@v3
       with:
         path: RebelEngine/${{ env.SCONS_CACHE }}
-        key: ${{ github.job }}-${{ strategy.job-index }}-${{ github.ref_name }}
+        key: ${{ github.job }}-${{ strategy.job-index }}-${{ github.sha }}
         restore-keys: |
           ${{ github.job }}-${{ strategy.job-index }}-
 
@@ -64,7 +64,7 @@ runs:
         #Build Rebel
         echo "::group::Build Rebel"
         scons -j2 ${{ inputs.build-options }}
-        echo "::ungroup::"
+        echo "::endgroup::"
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
