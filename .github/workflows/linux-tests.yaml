@@ -20,27 +20,27 @@ jobs:
           - name: Build production editor
             artifact: linux-editor
             build-options: production=yes
-            rebel-executable: godot.x11.tools.64
+            rebel-executable: rebel.x11.tools.64
 
           - name: Build with Clang address (includes leak) and undefined bahaviour sanitizers
             artifact: clang-asan-ubsan-sanitizers
             build-options: use_asan=yes use_ubsan=yes use_llvm=yes use_lld=yes
-            rebel-executable: godot.x11.tools.64.llvms
+            rebel-executable: rebel.x11.tools.64.llvms
 
           - name: Build with Clang thread sanitizer
             artifact: clang-tsan-sanitizer
             build-options: use_tsan=yes use_llvm=yes use_lld=yes
-            rebel-executable: godot.x11.tools.64.llvms
+            rebel-executable: rebel.x11.tools.64.llvms
 
           - name: Build with GCC address (includes leak) and undefined behaviour sanitizers
             artifact: gcc-asan-ubsan-sanitizers
             build-options: use_asan=yes use_ubsan=yes
-            rebel-executable: godot.x11.tools.64s
+            rebel-executable: rebel.x11.tools.64s
 
           - name: Build Linux Debug Template with Clang address (includes leak) and undefined behaviour sanitizers
             artifact: linux-debug-template
             build-options: tools=no target=release debug_symbols=yes use_asan=yes use_ubsan=yes use_llvm=yes use_lld=yes
-            rebel-executable: godot.x11.opt.64.llvms
+            rebel-executable: rebel.x11.opt.64.llvms
 
     steps:
       - name: Checkout Rebel Test Project
@@ -63,15 +63,15 @@ jobs:
         include:
           - name: Test Clang address (includes leak) and undefined bahaviour sanitizers
             artifact: clang-asan-ubsan-sanitizers
-            rebel-executable: godot.x11.tools.64.llvms
+            rebel-executable: rebel.x11.tools.64.llvms
 
           - name: Test Clang thread sanitizer
             artifact: clang-tsan-sanitizer
-            rebel-executable: godot.x11.tools.64.llvms
+            rebel-executable: rebel.x11.tools.64.llvms
 
           - name: Test GCC address (includes leak) and undefined bahaviour sanitizers
             artifact: gcc-asan-ubsan-sanitizers
-            rebel-executable: godot.x11.tools.64s
+            rebel-executable: rebel.x11.tools.64s
 
     steps:
       - name: Checkout Rebel Test Project
@@ -115,9 +115,9 @@ jobs:
         include:
           - name: Test Exported Linux Rebel Project
             editor-artifact: linux-editor
-            editor: godot.x11.tools.64
+            editor: rebel.x11.tools.64
             template-artifact: linux-debug-template
-            template: godot.x11.opt.64.llvms
+            template: rebel.x11.opt.64.llvms
             export-preset: Linux/X11
             export-preset-key: LINUX_DEBUG_TEMPLATE
             export-type: -debug
