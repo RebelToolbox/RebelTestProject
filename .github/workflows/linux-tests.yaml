@@ -43,11 +43,8 @@ jobs:
             rebel-executable: rebel.x11.opt.64.llvms
 
     steps:
-      - name: Checkout Rebel Test Project
-        uses: actions/checkout@v3
-
       - name: Build Rebel
-        uses: ./.github/actions/build-rebel
+        uses: RebelToolbox/RebelBuildAction@v1
         with:
           artifact: ${{ matrix.artifact }}
           build-options: ${{ matrix.build-options }}
