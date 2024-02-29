@@ -44,7 +44,7 @@ jobs:
 
     steps:
       - name: Build Rebel
-        uses: RebelToolbox/RebelBuildAction@v1
+        uses: RebelToolbox/RebelBuildAction@v2
         with:
           artifact: ${{ matrix.artifact }}
           build-options: ${{ matrix.build-options }}
@@ -72,10 +72,10 @@ jobs:
 
     steps:
       - name: Checkout Rebel Test Project
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Download Build Artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: ${{ matrix.artifact }}
 
@@ -95,7 +95,7 @@ jobs:
 
       - name: Upload artifacts
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact }}-logs
           path: |
@@ -122,15 +122,15 @@ jobs:
 
     steps:
       - name: Checkout Rebel Test Project
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Download Editor Build Artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: ${{ matrix.editor-artifact }}
 
       - name: Download Template Build Artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: ${{ matrix.template-artifact }}
 
@@ -154,7 +154,7 @@ jobs:
 
       - name: Upload artifacts
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.export }}
           path: |
