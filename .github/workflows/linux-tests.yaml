@@ -20,35 +20,29 @@ jobs:
           - name: Build production editor
             artifact: linux-editor
             build-options: production=yes
-            rebel-executable: rebel.linux.tools.64
 
           - name: Build with Clang address (includes leak) and undefined bahaviour sanitizers
             artifact: clang-asan-ubsan-sanitizers
             build-options: use_asan=yes use_ubsan=yes use_llvm=yes use_lld=yes
-            rebel-executable: rebel.linux.tools.64.llvms
 
           - name: Build with Clang thread sanitizer
             artifact: clang-tsan-sanitizer
             build-options: use_tsan=yes use_llvm=yes use_lld=yes
-            rebel-executable: rebel.linux.tools.64.llvms
 
           - name: Build with GCC address (includes leak) and undefined behaviour sanitizers
             artifact: gcc-asan-ubsan-sanitizers
             build-options: use_asan=yes use_ubsan=yes
-            rebel-executable: rebel.linux.tools.64s
 
           - name: Build Linux Debug Template with Clang address (includes leak) and undefined behaviour sanitizers
             artifact: linux-debug-template
             build-options: tools=no target=release debug_symbols=yes use_asan=yes use_ubsan=yes use_llvm=yes use_lld=yes
-            rebel-executable: rebel.linux.opt.64.llvms
 
     steps:
       - name: Build Rebel
-        uses: RebelToolbox/RebelBuildAction@v3
+        uses: RebelToolbox/RebelBuildAction@v4
         with:
           artifact: ${{ matrix.artifact }}
           build-options: ${{ matrix.build-options }}
-          rebel-executable: ${{ matrix.rebel-executable }}
 
   linux-tests:
     name: ${{ matrix.name }}
