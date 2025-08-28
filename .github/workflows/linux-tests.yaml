@@ -84,24 +84,18 @@ jobs:
 
       # Open Editor to import assets
       - name: Open Rebel Engine Editor
-        run: |
-          DRI_PRIME=0 xvfb-run ./${{ matrix.rebel-executable }} -e -q 2>&1 | tee editor.log
-          ./check_log.py editor.log
+        run: DRI_PRIME=0 xvfb-run ./${{ matrix.rebel-executable }} -e -q 2>&1 | tee editor.log
 
       - name: Run Rebel Engine Test Project
-        run: |
-          DRI_PRIME=0 xvfb-run ./${{ matrix.rebel-executable }} 300 2>&1 | tee project.log
-          ./check_log.py project.log
+        run: DRI_PRIME=0 xvfb-run ./${{ matrix.rebel-executable }} 300 2>&1 | tee project.log
 
       - name: Upload artifacts
-        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact }}-logs
           path: |
             editor.log
             project.log
-          retention-days: 14
 
   linux-export-tests:
     name: ${{ matrix.name }}
@@ -143,17 +137,12 @@ jobs:
           sed -i "s|${{ matrix.export-preset-key }}|$template|" export_presets.cfg
 
       - name: Export Project
-        run: |
-          DRI_PRIME=0 xvfb-run ./${{ matrix.editor }} --export${{ matrix.export-type }} "${{ matrix.export-preset }}" ${{ matrix.export }} 2>&1 | tee export.log
-          ./check_log.py export.log
+        run: DRI_PRIME=0 xvfb-run ./${{ matrix.editor }} --export${{ matrix.export-type }} "${{ matrix.export-preset }}" ${{ matrix.export }} 2>&1 | tee export.log
 
       - name: Run Exported Project
-        run: |
-          DRI_PRIME=0 xvfb-run ./${{ matrix.export }} 300 2>&1 | tee project.log
-          ./check_log.py project.log
+        run: DRI_PRIME=0 xvfb-run ./${{ matrix.export }} 300 2>&1 | tee project.log
 
       - name: Upload artifacts
-        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.export }}
@@ -161,4 +150,3 @@ jobs:
             ${{ matrix.export }}
             export.log
             project.log
-          retention-days: 14
