@@ -66,7 +66,7 @@ jobs:
 
     steps:
       - name: Checkout Rebel Test Project
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Download Build Artifact
         uses: actions/download-artifact@v4
@@ -110,7 +110,7 @@ jobs:
 
     steps:
       - name: Checkout Rebel Test Project
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Download Editor Build Artifact
         uses: actions/download-artifact@v4
