@@ -1,0 +1,11 @@
+# SPDX-FileCopyrightText: 2023 Rebel Test Project contributors
+#
+# SPDX-License-Identifier: MIT
+
+# Rebel Test Project .gitatributes
+
+# Standardize Line Endings
+* text=auto eol=lf
+
+# Specify Binary Files
+*.png binary
