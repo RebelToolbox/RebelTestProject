@@ -78,10 +78,10 @@ jobs:
 
       # Open Editor to import assets
       - name: Open Rebel Engine Editor
-        run: DRI_PRIME=0 xvfb-run ./${{ matrix.rebel-executable }} -e -q 2>&1 | tee editor.log
+        run: xvfb-run ./${{ matrix.rebel-executable }} -e -q 2>&1 | tee editor.log
 
       - name: Run Rebel Engine Test Project
-        run: DRI_PRIME=0 xvfb-run ./${{ matrix.rebel-executable }} 300 2>&1 | tee project.log
+        run: xvfb-run ./${{ matrix.rebel-executable }} 300 2>&1 | tee project.log
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v7
@@ -131,10 +131,10 @@ jobs:
           sed -i "s|${{ matrix.export-preset-key }}|$template|" export_presets.cfg
 
       - name: Export Project
-        run: DRI_PRIME=0 xvfb-run ./${{ matrix.editor }} --export${{ matrix.export-type }} "${{ matrix.export-preset }}" ${{ matrix.export }} 2>&1 | tee export.log
+        run: xvfb-run ./${{ matrix.editor }} --export${{ matrix.export-type }} "${{ matrix.export-preset }}" ${{ matrix.export }} 2>&1 | tee export.log
 
       - name: Run Exported Project
-        run: DRI_PRIME=0 xvfb-run ./${{ matrix.export }} 300 2>&1 | tee project.log
+        run: xvfb-run ./${{ matrix.export }} 300 2>&1 | tee project.log
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v7
