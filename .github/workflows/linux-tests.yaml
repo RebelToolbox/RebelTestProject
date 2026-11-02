@@ -13,7 +13,7 @@ concurrency:
 jobs:
   linux-builds:
     name: ${{ matrix.name }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         include:
@@ -46,7 +46,7 @@ jobs:
 
   linux-tests:
     name: ${{ matrix.name }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: linux-builds
     strategy:
       fail-fast: false
@@ -93,7 +93,7 @@ jobs:
 
   linux-export-tests:
     name: ${{ matrix.name }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: linux-builds
     strategy:
       matrix:
